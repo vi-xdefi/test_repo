@@ -7,6 +7,10 @@ on:
     types:
       - ready_for_review
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
