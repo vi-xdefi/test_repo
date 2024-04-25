@@ -6,7 +6,6 @@ on:
       - 'main'
     types:
       # update
-      # - synchronize
       # - reopened
       - ready_for_review
 
