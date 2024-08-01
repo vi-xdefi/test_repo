@@ -1,17 +1,53 @@
-name: Deploy
+name: 'E2E'
+
 on:
-  push:
-    branches:
-      - 'main'
-      - 'staging'
-      - 'develop'
+  workflow_dispatch:
+    inputs:
+      bstack_ios_app:
+        description: 'Browserstack iOS app'
+      bstack_android_app:
+        description: 'Browserstack Android app'
 
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - platform: android
+          - platform: ios
+    runs-on: ubuntu-latest
+    if: ${{ matrix.platform == 'android' && !github.event.inputs.bstack_android_app }} || ${{ matrix.platform == 'ios' && !github.event.inputs.bstack_ios_app }}
+    steps:
+      - name: 🚀 Create build
+        run: echo "Create build for ${{ matrix.platform }}"
+
+
+  test:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+          - platform: ios
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Upload build to Browserstack
+        if: ${{ matrix.platform == 'android' && !github.event.inputs.bstack_android_app }} || ${{ matrix.platform == 'ios' && !github.event.inputs.bstack_ios_app }}
+        run: |
+          BROWSERSTACK_APP_URL="bs://sample-url-of-created-app-inside-workflow"
+          echo "BROWSERSTACK_APP_URL=$BROWSERSTACK_APP_URL"
+          echo "BROWSERSTACK_APP_URL=$BROWSERSTACK_APP_URL" >> $GITHUB_ENV
 
-      - name: show workflow metadata
-        run: cat code.txt
+      - name: Run tests
+        env:
+          BROWSERSTACK_APP_URL: ${{ matrix.platform == 'android' && github.event.inputs.bstack_android_app || env.BROWSERSTACK_APP_URL }}
+        run: |
+          if [ "${{ matrix.platform }}" == "android" && "${{ github.event.inputs.bstack_android_app }}" ]; then
+            export BROWSERSTACK_APP_URL=${{ github.event.inputs.bstack_android_app}}
+          elif [ "${{ matrix.platform }}" == "ios" && "${{ github.event.inputs.bstack_ios_app }}" ]; then
+            export BROWSERSTACK_APP_URL=${{ github.event.inputs.bstack_ios_app}}
+          else
+            export BROWSERSTACK_APP_URL=${{ env.BROWSERSTACK_APP_URL }}
+          fi
+          echo "Run tests for ${{ env.BROWSERSTACK_APP_URL }}"
