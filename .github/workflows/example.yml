@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🚀 Create build
-        if: ${{ matrix.platform == 'android' && !github.event.inputs.bstack_android_app }} || ${{ matrix.platform == 'ios' && !github.event.inputs.bstack_ios_app }}
+        if: ${{ matrix.platform == 'android' && github.event.inputs.bstack_android_app == '' }} || ${{ matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '' }}
         run: echo "Create build for ${{ matrix.platform }}"
 
 
@@ -33,15 +33,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload build to Browserstack
-        if: ${{ matrix.platform == 'android' && !github.event.inputs.bstack_android_app }} || ${{ matrix.platform == 'ios' && !github.event.inputs.bstack_ios_app }}
+        if: ${{ matrix.platform == 'android' && github.event.inputs.bstack_android_app == '' }} || ${{ matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '' }}
         run: |
           BROWSERSTACK_APP_URL="bs://sample-url-of-created-app-inside-workflow"
           echo "BROWSERSTACK_APP_URL=$BROWSERSTACK_APP_URL"
           echo "BROWSERSTACK_APP_URL=$BROWSERSTACK_APP_URL" >> $GITHUB_ENV
 
       - name: Run tests
-        env:
-          BROWSERSTACK_APP_URL: ${{ matrix.platform == 'android' && github.event.inputs.bstack_android_app || env.BROWSERSTACK_APP_URL }}
         run: |
           if [ "${{ matrix.platform }}" == "android" ] && [ -n "${{ github.event.inputs.bstack_android_app }}" ]; then
             export BROWSERSTACK_APP_URL="${{ github.event.inputs.bstack_android_app}}"
