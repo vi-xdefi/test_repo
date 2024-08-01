@@ -17,7 +17,7 @@ jobs:
           - platform: ios
     runs-on: ubuntu-latest
     env:
-      BSTACK_APP_PROVIDED: (matrix.platform == 'android' && github.event.inputs.bstack_android_app == '') || (matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '')
+      BSTACK_APP_PROVIDED: ${{ (matrix.platform == 'android' && github.event.inputs.bstack_android_app == '') || (matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '') }}
     steps:
       - name: 🚀 Create build
         if: env.BSTACK_APP_PROVIDED == false
@@ -36,7 +36,7 @@ jobs:
           - platform: ios
     runs-on: ubuntu-latest
     env:
-      BSTACK_APP_PROVIDED: (matrix.platform == 'android' && github.event.inputs.bstack_android_app == '') || (matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '')
+      BSTACK_APP_PROVIDED: ${{ (matrix.platform == 'android' && github.event.inputs.bstack_android_app == '') || (matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '') }}
     steps:
       - name: Debug info
         run: echo ${{ env.BSTACK_APP_PROVIDED }}
