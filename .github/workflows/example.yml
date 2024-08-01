@@ -20,7 +20,7 @@ jobs:
       BSTACK_APP_PROVIDED: ${{ (matrix.platform == 'android' && github.event.inputs.bstack_android_app == '') || (matrix.platform == 'ios' && github.event.inputs.bstack_ios_app == '') }}
     steps:
       - name: 🚀 Create build
-        if: env.BSTACK_APP_PROVIDED == false
+        if: env.BSTACK_APP_PROVIDED == "false"
         run: |
           echo ${{ env.BSTACK_APP_PROVIDED }}
           echo "Create build for ${{ matrix.platform }}"
@@ -41,7 +41,7 @@ jobs:
       - name: Debug info
         run: echo ${{ env.BSTACK_APP_PROVIDED }}
       - name: Upload build to Browserstack
-        if: env.BSTACK_APP_PROVIDED == false
+        if: env.BSTACK_APP_PROVIDED == "false"
         run: |
           echo ${{ env.BSTACK_APP_PROVIDED }}
           BROWSERSTACK_APP_URL="bs://sample-url-of-created-app-inside-workflow"
