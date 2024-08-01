@@ -43,9 +43,9 @@ jobs:
         env:
           BROWSERSTACK_APP_URL: ${{ matrix.platform == 'android' && github.event.inputs.bstack_android_app || env.BROWSERSTACK_APP_URL }}
         run: |
-          if [ "${{ matrix.platform }}" == "android" && "${{ github.event.inputs.bstack_android_app }}" ]; then
+          if [ "${{ matrix.platform }}" == "android" ] && [ -n "${{ github.event.inputs.bstack_android_app }}" ]; then
             export BROWSERSTACK_APP_URL="${{ github.event.inputs.bstack_android_app}}"
-          elif [ "${{ matrix.platform }}" == "ios" && "${{ github.event.inputs.bstack_ios_app }}" ]; then
+          elif [ "${{ matrix.platform }}" == "ios" ] && [ -n "${{ github.event.inputs.bstack_ios_app }}" ]; then
             export BROWSERSTACK_APP_URL="${{ github.event.inputs.bstack_ios_app}}"
           else
             export BROWSERSTACK_APP_URL="${{ env.BROWSERSTACK_APP_URL }}"
